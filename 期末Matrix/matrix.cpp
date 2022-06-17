@@ -5,6 +5,19 @@
 using namespace std;
 
 template <typename T>
+void matrix<T>::display()
+{
+    for (int i = 0; i < this->row; i++)
+    {
+        for (int j = 0; j < this->col; ++j)
+        {
+            cout << this->data[i * this->col + j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+template <typename T>
 int matrix<T>::get_row()
 {
     return this->nrows;
@@ -17,9 +30,9 @@ int matrix<T>::get_col()
 }
 
 template <typename T>
-int matrix<T>::get_ref_cout()
+int matrix<T>::get_ref_count()
 {
-    return this->ref_cout;
+    return this->ref_count;
 }
 
 template <typename T>
@@ -37,8 +50,7 @@ matrix<T>::matrix(int row, int col)
     this->row = row;
     this->col = col;
     this->data = new T[row * col]{0};
-    this->ref_cout = new int *;
-    this->ref_cout = 1;
+    *(this->ref_count) = 1;
 }
 
 template <typename T>
@@ -51,8 +63,8 @@ matrix<T>::matrix(int row, int col, T *data)
     {
         this->data[i] = data[i];
     };
-    this->ref_cout = new int *;
-    this->ref_cout = 1;
+    this->ref_count = new int;
+    *(this->ref_count) = 1;
 }
 
 template <typename T>
@@ -71,7 +83,7 @@ matrix<T> matrix<T>::operator=(const matrix<T> &other)
     this->row = other.row;
     this->col = other.col;
     *(this->ref_count) -= 1; //防止内存泄漏
-    if (*(this->ref_count) = 0 &this->data = nullptr)
+    if (*(this->ref_count) == 0 && this->data == nullptr)
     {
         delete this->ref_count;
         delete[] this->data;
@@ -87,7 +99,7 @@ template <typename T>
 matrix<T>::~matrix()
 {
     *(this->ref_count) -= 1;
-    if (*(this->ref_count) = 0 &this->data = nullptr)
+    if (*(this->ref_count) == 0 && this->data == nullptr)
     {
         delete[] this->data;
         delete this->ref_count;
@@ -99,12 +111,13 @@ matrix<T>::~matrix()
 template <typename T>
 matrix<T> matrix<T>::operator+(matrix<T> &other)
 {
+
     if (this->row != other.row || this->col != other.col)
     {
         throw SizeMismatchException();
     }
     int size = (this->row) * (this->col);
-    T data_temp[size];
+    T data_temp[size] = {0};
     for (int i = 0; i < size; ++i)
     {
         data_temp[i] = this->data[i] + other.data[i];
@@ -116,17 +129,12 @@ matrix<T> matrix<T>::operator+(matrix<T> &other)
 template <typename T>
 matrix<T> matrix<T>::operator-(matrix<T> &other)
 {
-    catch (const std::exception &e)
-    {
-        std::cerr << e.what() << '\n';
-    }
-
     if (this->row != other.row || this->col != other.col)
     {
         throw SizeMismatchException();
     }
     int size = (this->row) * (this->col);
-    T data_temp[size];
+    T data_temp[size] = {0};
     for (int i = 0; i < size; ++i)
     {
         data_temp[i] = this->data[i] - other.data[i];
@@ -138,19 +146,22 @@ matrix<T> matrix<T>::operator-(matrix<T> &other)
 template <typename T>
 matrix<T> matrix<T>::operator*(matrix<T> &other)
 {
+
     if (this->col != other.row)
     {
         throw SizeMismatchException();
     }
-    int size = (this->row) * (this->col);
-    T data_temp[size];
+
+    int size = (this->row) * (other.col);
+    T data_temp[size] = {0};
     for (int i = 0; i < this->row; ++i)
     {
         for (int j = 0; j < other.col; ++j)
         {
             for (int k = 0; k < this->col; ++k)
             {
-                data_temp[i * other.col + j] += this->data[i * this->col + k] * other.data[k + other.col + j];
+                cout << this->data[i * this->col + k] << " " << other.data[k * other.col + j] << endl;
+                data_temp[i * other.col + j] += this->data[i * this->col + k] * other.data[k * other.col + j];
             }
         }
     }
@@ -162,7 +173,7 @@ template <typename T>
 matrix<T> matrix<T>::operator*(T number)
 {
     int size = this->row * this->col;
-    T data_temp[size];
+    T data_temp[size] = {0};
     for (int i = 0; i < size; ++i)
     {
         data_temp[i] = this->data[i] * number;
@@ -188,7 +199,7 @@ matrix<T> matrix<T>::operator/(T number)
         throw ZeroDivideException();
     }
     int size = this->row * this->col;
-    T data_temp[size];
+    T data_temp[size] = {0};
     for (int i = 0; i < size; ++i)
     {
         data_temp[i] = this->data[i] / number;
@@ -201,7 +212,7 @@ template <typename T>
 matrix<T> matrix<T>::transpose()
 {
     int size = (this->row) * (this->col);
-    T data_temp[size];
+    T data_temp[size] = {0};
     for (int i = 0; i < row; ++i)
     {
         for (int j = 0; j < col; ++j)
@@ -209,22 +220,6 @@ matrix<T> matrix<T>::transpose()
             data_temp[j * this->row + i] = this->data[i * this->col + j];
         }
     }
-}
-
-template <typename T>
-matrix<T> matrix<T>::matrix_matrix_multiplication(matrix<T> &other)
-{
-    if (this->row != other.row || this->col != other.col)
-    {
-        throw SizeMismatchException();
-    }
-    int size = this->row * this->col;
-    T data_temp[size];
-    for (int i = 0; i < size; ++i)
-    {
-        data_temp[i] = this->data[i] * other.data[i];
-    }
-    return matrix(this->row, this->col, data_temp);
 }
 
 template <typename T>
@@ -256,7 +251,7 @@ matrix<T> matrix<T>::reshape(int newRow, int newCol)
 template <typename T> //截取矩阵第二三行，第二、三列  a[1:3,1:3]
 matrix<T> matrix<T>::slicing(int rowStart, int rowEnd, int colStart, int colEnd)
 {
-    T data_temp[(rowEnd - rowStart) * (colEnd - colStart)];
+    T data_temp[(rowEnd - rowStart) * (colEnd - colStart)] = {0};
     int k = 0;
     for (int i = rowStart; i < rowEnd; ++i)
     {
@@ -428,20 +423,19 @@ matrix<T> matrix<T>::conjugation(matrix<T> &original)
 {
     T a;
     string x = typeid(T).name();
-    if (x.substr(0,10)=="St7complex")
+    if (x.substr(0, 10) == "St7complex")
     {
         matrix<T> res(original.row, original.col);
         for (int i = 0; i < original.row; i++)
         {
             for (int j = 0; j < original.col; j++)
             {
-                complex<T> value = original.data[i*res.col+j];
-                res.data[i*res.col+j] = complex<T>(value.real,(-1)*value.imag);
+                complex<T> value = original.data[i * res.col + j];
+                res.data[i * res.col + j] = complex<T>(value.real, (-1) * value.imag);
             }
         }
         return res;
     }
-    else return original;
+    else
+        return original;
 };
-
-

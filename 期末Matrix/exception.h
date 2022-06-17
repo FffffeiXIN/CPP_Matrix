@@ -8,7 +8,7 @@ using namespace std;
 class SizeMismatchException : public exception {
 public:
     const char *what() const noexcept override {
-        return "Exception: The size of two matrices are not matching.\n";
+        return "Exception: The size of two matrices (vector) are not matching.\n";
     }
 };
 

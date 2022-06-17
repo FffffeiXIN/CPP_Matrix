@@ -85,6 +85,24 @@ int main() {
             reverse.display();
             cout << "-----------------------------------" << endl;
         }
+        {
+            int array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+            matrix<int> a(3, 3, array);
+            cout << a.trace() << endl;
+            cout << "-----------------------------------" << endl;
+        }
+        {
+            matrix<double> a(3, 2, array1);
+            vector<double> v = {3.6, 7.3};
+            a.vector_multiplication(v).display();
+            cout << "-----------------------------------" << endl;
+        }
+        {
+            matrix<double> a(3, 2, array1);
+            vector<double> v = {3.6, 7.3, 2.2};
+            matrix<double>::vector_multiplication(v, a).display();
+            cout << "-----------------------------------" << endl;
+        }
     }
     catch (exception &e) {
         cout << e.what() << endl;

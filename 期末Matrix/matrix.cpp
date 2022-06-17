@@ -83,7 +83,7 @@ matrix<T> matrix<T>::operator=(const matrix<T> &other)
     this->row = other.row;
     this->col = other.col;
     *(this->ref_count) -= 1; //防止内存泄漏
-    if (*(this->ref_count) == 0 && this->data == nullptr)
+    if (*(this->ref_count) == 0)
     {
         delete this->ref_count;
         delete[] this->data;
@@ -99,7 +99,7 @@ template <typename T>
 matrix<T>::~matrix()
 {
     *(this->ref_count) -= 1;
-    if (*(this->ref_count) == 0 && this->data == nullptr)
+    if (*(this->ref_count) == 0)
     {
         delete[] this->data;
         delete this->ref_count;
@@ -160,7 +160,7 @@ matrix<T> matrix<T>::operator*(matrix<T> &other)
         {
             for (int k = 0; k < this->col; ++k)
             {
-                cout << this->data[i * this->col + k] << " " << other.data[k * other.col + j] << endl;
+                // cout << this->data[i * this->col + k] << " " << other.data[k * other.col + j] << endl;
                 data_temp[i * other.col + j] += this->data[i * this->col + k] * other.data[k * other.col + j];
             }
         }
@@ -182,8 +182,8 @@ matrix<T> matrix<T>::operator*(T number)
 }
 
 // 2*a
-template <typename T>
-matrix<T> operator*(T number, matrix<T> &matrix1)
+template <typename T1>
+matrix<T1> operator*(T1 number, matrix<T1> &matrix1)
 {
     return matrix1 * number;
     //如何为friend函数调用constructor要像下面那样调用。

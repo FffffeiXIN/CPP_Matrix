@@ -30,7 +30,7 @@ public:
 
     matrix();
 
-    matrix(int roe, int col);
+    matrix(int row, int col);
 
     matrix(int row, int col, T *data); //这个constructor复数类似乎可以直接用
     matrix(const matrix<T> &other);
@@ -53,6 +53,8 @@ public:
 
     //v为行向量
     static matrix<T> vector_multiplication(const vector<T> &v, const matrix<T> &matrix1);
+
+    matrix<T> cross(matrix<T> other);
 
 
     matrix<T> transpose(); //矩阵的转置

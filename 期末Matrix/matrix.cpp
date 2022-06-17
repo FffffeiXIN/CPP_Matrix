@@ -213,6 +213,7 @@ matrix<T> matrix<T>::transpose()
 {
     int size = (this->row) * (this->col);
     T data_temp[size] = {0};
+
     for (int i = 0; i < row; ++i)
     {
         for (int j = 0; j < col; ++j)
@@ -220,6 +221,8 @@ matrix<T> matrix<T>::transpose()
             data_temp[j * this->row + i] = this->data[i * this->col + j];
         }
     }
+
+    return matrix(this->col, this->row, data_temp);
 }
 
 template <typename T>

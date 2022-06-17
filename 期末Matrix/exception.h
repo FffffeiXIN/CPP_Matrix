@@ -40,4 +40,11 @@ public:
     }
 };
 
+class Not3DVectorException : public exception {
+public:
+    const char *what() const noexcept override {
+        return "Exception: The matrix is not a 3-dimensional vector .\n";
+    }
+};
+
 #endif // CPP_PROJECT_TEST_EXCEPTION_H

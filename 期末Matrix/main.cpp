@@ -103,6 +103,16 @@ int main() {
             matrix<double>::vector_multiplication(v, a).display();
             cout << "-----------------------------------" << endl;
         }
+        {
+            int arr1[] = {1, 4, 6};
+            matrix<int> a(1, 3, arr1);
+
+            int arr2[] = {1, 5, 8};
+            matrix<int> b(1, 3, arr2);
+
+            a.cross(b).display();
+            cout << "-----------------------------------" << endl;
+        }
     }
     catch (exception &e) {
         cout << e.what() << endl;
@@ -116,3 +126,17 @@ void show(const vector<double> &v) {
     }
     cout << endl;
 }
+
+//#include <iostream>
+//#include <complex>
+//
+//using namespace std;
+//
+//int main(int argc, char *argv[]) {
+//    complex<double> a(2.000, 2);
+//    complex<double> b(2.000, 2);
+//    a.operator+=(b);
+//
+//    cout << a.real() << " "<<a.imag() << endl;
+//    return 0;
+//}

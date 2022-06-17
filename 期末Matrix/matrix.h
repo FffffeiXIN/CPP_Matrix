@@ -48,6 +48,13 @@ public:
     friend matrix<T1> operator*(T1 number, matrix<T1> &matrix1); // 2*a
 
     matrix<double> operator/(T number); // scalar division a/2
+    //v为列向量
+    matrix<double> vector_multiplication(const vector<T> &v);
+
+    //v为行向量
+    static matrix<T> vector_multiplication(const vector<T> &v, const matrix<T> &matrix1);
+
+
     matrix<T> transpose(); //矩阵的转置
 
     T dot(matrix<T> &other); //矩阵的点乘，得到一个数字
@@ -68,6 +75,8 @@ public:
 
     matrix<T> conjugation(matrix<T> &matrix);//测复数
 
+    T trace();
+
     double det();
 
     matrix<T> inverse();
@@ -76,4 +85,3 @@ public:
 };
 
 #endif // CPP_PROJECT_TEST_M_H
-

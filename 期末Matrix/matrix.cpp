@@ -169,7 +169,7 @@ matrix<double> matrix<T>::operator/(T number) {
     if (number == 0) {
         throw ZeroDivideException();
     }
-    int size = this->row * this->col;
+    int size = (this->row) * (this->col);
     double data_temp[size] = {0};
     for (int i = 0; i < size; ++i) {
         data_temp[i] = (double) this->data[i] / number;
@@ -205,6 +205,17 @@ matrix<T> matrix<T>::vector_multiplication(const vector<T> &v, const matrix<T> &
     return matrix<T>(1, matrix1.col, data_temp);
 }
 
+template<typename T>
+matrix<T> matrix<T>::cross(matrix<T> other) {
+    if (this->row != 1 || this->col != 3 || other.row != 1 || other.col != 3) {
+        throw Not3DVectorException();
+    }
+    T data_temp[3];
+    data_temp[0] = this->data[1] * other.data[2] - this->data[2] * other.data[1];
+    data_temp[1] = this->data[2] * other.data[0] - this->data[0] * other.data[2];
+    data_temp[2] = this->data[0] * other.data[1] - this->data[1] * other.data[0];
+    return matrix(1, 3, data_temp);
+}
 
 //求矩阵转置
 template<typename T>
@@ -516,6 +527,3 @@ T matrix<T>::trace() {
     }
     return cnt;
 }
-
-
-

@@ -87,9 +87,19 @@ public:
 
     static matrix<T> rotate(const matrix<T> &matrix1);
 
-    void display();
-
     static void caculate(T *data_temp, int temp_row, int temp_col, T *extend, const matrix<T> &kernel, int extend_col);
+
+    void RowExchange(int a, int b);
+
+    matrix<T> getRowEchelon() const;
+
+    const T getRank() const;
+
+    vector<T> EigenValues();
+
+    vector<matrix<T>> EigenVector();
+
+    void display();
 };
 
 #endif // CPP_PROJECT_TEST_M_H

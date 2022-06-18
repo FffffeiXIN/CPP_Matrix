@@ -54,4 +54,18 @@ public:
     }
 };
 
+class SpareSizeNotMatchException : public exception {
+public:
+    const char *what() const noexcept override {
+        return "Exception: The size of values and positions not match, the constructor can't work.\n";
+    }
+};
+
+class NotSpareException : public exception {
+public:
+    const char *what() const noexcept override {
+        return "Exception: The matrix is not a spare matrix.\n";
+    }
+};
+
 #endif // CPP_PROJECT_TEST_EXCEPTION_H

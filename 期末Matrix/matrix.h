@@ -83,7 +83,13 @@ public:
 
     matrix<T> inverse();
 
+    matrix<T> convolution(const matrix<T> &kernel, const string &type);
+
+    static matrix<T> rotate(const matrix<T> &matrix1);
+
     void display();
+
+    static void caculate(T *data_temp, int temp_row, int temp_col, T *extend, const matrix<T> &kernel, int extend_col);
 };
 
 #endif // CPP_PROJECT_TEST_M_H

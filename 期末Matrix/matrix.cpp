@@ -527,3 +527,77 @@ T matrix<T>::trace() {
     }
     return cnt;
 }
+
+//把矩阵旋转180度
+template<typename T>
+matrix<T> matrix<T>::rotate(const matrix<T> &a) {
+    T data_temp[a.row * a.col];
+    for (int i = 0; i < a.row; i++) {
+        for (int j = 0; j < a.col; j++) {
+            data_temp[i * a.col + j] = a.data[(a.row - 1 - i) * a.col + a.col - 1 - j];
+        }
+    }
+    return matrix<T>(a.row, a.col, data_temp);
+}
+
+//卷积运算
+template<typename T>
+matrix<T> matrix<T>::convolution(const matrix<T> &in, const string &type) {
+    matrix<T> kernel = rotate(in);
+    int temp_row;
+    int temp_col;
+    int size;
+    if (type == "valid") {
+        //valid 型 不扩充
+        temp_row = this->row - kernel.row + 1;
+        temp_col = this->col - kernel.row + 1;
+        size = (temp_row) * (temp_col);
+        T data_temp[size] = {0};
+        caculate(data_temp, temp_row, temp_col, this->data, kernel, this->col);
+        return matrix(temp_row, temp_col, data_temp);
+    } else if (type == "same") {
+        // same 型 扩充一圈
+        T extend[(this->row + 2) * (this->col + 2)] = {0};//扩充初始矩阵，填0
+        for (int i = 1; i < this->row + 1; ++i) {
+            for (int j = 1; j < this->col + 1; ++j) {
+                extend[i * (this->col + 2) + j] = this->data[(i - 1) * (this->col) + (j - 1)];
+            }
+        }
+        temp_row = this->row - kernel.row + 3;
+        temp_col = this->col - kernel.row + 3;
+        size = (temp_row) * (temp_col);
+        T data_temp[size] = {0};
+        caculate(data_temp, temp_row, temp_col, extend, kernel, this->col + 2);
+        return matrix(temp_row, temp_col, data_temp);
+    } else if (type == "full") {
+        //扩充两圈
+        T extend[(this->row + 4) * (this->col + 4)] = {0};//扩充初始矩阵，填0
+        for (int i = 2; i < this->row + 2; ++i) {
+            for (int j = 2; j < this->col + 2; ++j) {
+                extend[i * (this->col + 4) + j] = this->data[(i - 2) * (this->col) + (j - 2)];
+            }
+        }
+        temp_row = this->row - kernel.row + 5;
+        temp_col = this->col - kernel.row + 5;
+        size = (temp_row) * (temp_col);
+        T data_temp[size] = {0};
+        caculate(data_temp, temp_row, temp_col, extend, kernel, this->col + 4);
+        return matrix(temp_row, temp_col, data_temp);
+    }
+}
+
+//卷积操作
+template<typename T>
+void matrix<T>::caculate(T *data_temp, int temp_row, int temp_col, T *extend, const matrix<T> &kernel, int extend_col) {
+    for (int i = 0; i < temp_row; ++i) {
+        for (int j = 0; j < temp_col; ++j) {
+            int sum = 0;
+            for (int m = 0; m < kernel.row; ++m) {
+                for (int n = 0; n < kernel.col; ++n) {
+                    sum += extend[(i + m) * extend_col + j + n] * kernel.data[m * kernel.col + n];
+                }
+            }
+            data_temp[i * temp_col + j] = sum;
+        }
+    }
+}

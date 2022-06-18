@@ -24,12 +24,13 @@ public:
 
     int get_col();
 
-    T* getdata();
+    T *getdata();
 
-    int get_ref_count();
-    void setdata(int index,T a);
+    int* get_ref_count();
 
-    int *getShape();
+    void setdata(int index, T a);
+
+    T *getShape();
 
     matrix();
 
@@ -59,10 +60,13 @@ public:
 
     matrix<T> cross(matrix<T> other);
 
+    matrix<T> element_wise_multiplication(matrix<T> other);//矩阵对应元素相乘
+
+    matrix<T> dot(matrix<T> &other); //矩阵的点乘,行数相同 m*1,m*n
 
     matrix<T> transpose(); //矩阵的转置
 
-    T dot(matrix<T> &other); //矩阵的点乘，得到一个数字
+
     matrix<T> reshape(int newRow, int newCol);
 
     //截取矩阵第二三行，第二、三列  a[1:3,1:3]
@@ -83,7 +87,7 @@ public:
     T trace();
 
     double det();
-    
+
     complex<int> det_complex();
 
     matrix<T> inverse();
@@ -105,6 +109,7 @@ public:
     vector<matrix<T>> EigenVector();
 
     void display();
+
 };
 
 #endif // CPP_PROJECT_TEST_M_H

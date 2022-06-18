@@ -24,7 +24,10 @@ public:
 
     int get_col();
 
+    T* getdata();
+
     int get_ref_count();
+    void setdata(int index,T a);
 
     int *getShape();
 
@@ -80,6 +83,8 @@ public:
     T trace();
 
     double det();
+    
+    complex<int> det_complex();
 
     matrix<T> inverse();
 
@@ -93,7 +98,7 @@ public:
 
     matrix<T> getRowEchelon() const;
 
-    const T getRank() const;
+    const int getRank() const;
 
     vector<T> EigenValues();
 

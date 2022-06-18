@@ -23,8 +23,10 @@ private:
     vector<position> positions;
     int row;
     int col;
+    
+    
 public:
-    SparseMatrix(int a=1,int b=1):row(a),col(b){};
+    SparseMatrix(vector<T> vals,vector<position> pots,int a=1,int b=1):values(vals),positions(pots),row(a),col(b){};
     SparseMatrix(matrix<T> & matrix){
         this->row=matrix.row;
         this->col=matrix.col;

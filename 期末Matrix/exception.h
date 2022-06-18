@@ -47,4 +47,11 @@ public:
     }
 };
 
+class TypeInvalidException : public exception {
+public:
+    const char *what() const noexcept override {
+        return "Exception: The input type is invalid and cannot be operated on.\n";
+    }
+};
+
 #endif // CPP_PROJECT_TEST_EXCEPTION_H

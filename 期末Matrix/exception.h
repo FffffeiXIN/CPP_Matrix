@@ -5,6 +5,7 @@
 
 using namespace std;
 
+//两个矩阵或一个矩阵一个向量做运算时大小不匹配
 class SizeMismatchException : public exception {
 public:
     const char *what() const noexcept override {
@@ -12,6 +13,7 @@ public:
     }
 };
 
+//除法不能除以0
 class ZeroDivideException : public exception {
 public:
     const char *what() const noexcept override {
@@ -19,6 +21,7 @@ public:
     }
 };
 
+//Reshape的大小不合法
 class InvalidReshapeSizeException : public exception {
 public:
     const char *what() const noexcept override {
@@ -26,6 +29,7 @@ public:
     }
 };
 
+//该矩阵不是一个方阵
 class NonSquareException : public exception {
 public:
     const char *what() const noexcept override {
@@ -33,6 +37,7 @@ public:
     }
 };
 
+//矩阵不可逆
 class IrreversibleException : public exception {
 public:
     const char *what() const noexcept override {
@@ -40,6 +45,7 @@ public:
     }
 };
 
+//矩阵不是一个3维的向量
 class Not3DVectorException : public exception {
 public:
     const char *what() const noexcept override {
@@ -47,6 +53,7 @@ public:
     }
 };
 
+//输入一些类型进而做操作时，类型不合法
 class TypeInvalidException : public exception {
 public:
     const char *what() const noexcept override {
@@ -54,6 +61,7 @@ public:
     }
 };
 
+//稀疏矩阵的position和values的大小不相等，无法构建稀疏矩阵
 class SpareSizeNotMatchException : public exception {
 public:
     const char *what() const noexcept override {
@@ -61,6 +69,7 @@ public:
     }
 };
 
+//该矩阵不是一个稀疏矩阵
 class NotSpareException : public exception {
 public:
     const char *what() const noexcept override {

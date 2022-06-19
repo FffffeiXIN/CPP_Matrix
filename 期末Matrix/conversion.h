@@ -2,9 +2,12 @@
 #define CPP_PROJECT_TEST_CONVERSION_H
 
 #include <iostream>
+#include<opencv2/opencv.hpp>
 #include "matrix.h"
 
+
 using namespace std;
+using namespace cv;
 
 template<typename T>
 cv::Mat matrixToImag(matrix<T> mat) {

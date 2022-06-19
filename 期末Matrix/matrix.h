@@ -5,13 +5,12 @@
 #include <complex>
 #include <cstring>
 #include <vector>
-#include<opencv2/opencv.hpp>
 
 using namespace std;
-using namespace cv;
 
-template<typename T>
-class matrix {
+template <typename T>
+class matrix
+{
 private:
     int row;
 
@@ -48,26 +47,24 @@ public:
     matrix<T> operator-(matrix<T> &other); //矩阵减法
     matrix<T> operator*(matrix<T> &other); //矩阵叉乘
 
-    matrix<T> operator*(T number); // scalar multiplication a*2
+    matrix<T> operator*(double number); // scalar multiplication a*2
 
-    template<typename T1>
-    friend matrix<T1> operator*(T1 number, matrix<T1> &matrix1); // 2*a
+    template <typename T1>
+    friend matrix<T1> operator*(double number, matrix<T1> &matrix1); // 2*a
 
-    matrix<double> operator/(T number); // scalar division a/2
-    //v为列向量
+    matrix<T> operator/(double number); // scalar division a/2
+    // v为列向量
     matrix<T> vector_multiplication(const vector<T> &v);
 
-    //v为行向量
-    template<typename T2>
+    // v为行向量
+    template <typename T2>
     friend matrix<T2> vector_multiplication(const vector<T2> &v, const matrix<T2> &matrix1);
 
     matrix<T> cross(matrix<T> other);
 
-    matrix<T> element_wise_multiplication(matrix<T> other);//矩阵对应元素相乘
+    matrix<T> element_wise_multiplication(matrix<T> other); //矩阵对应元素相乘
 
     matrix<T> dot(matrix<T> &other); //矩阵的点乘,行数相同 m*1,m*n
-
-
 
     matrix<T> reshape(int newRow, int newCol);
 
@@ -88,14 +85,6 @@ public:
 
     matrix<T> transpose(); //矩阵的转置
 
-    T trace();
-
-    double det();
-
-    complex<int> det_complex();
-
-    matrix<T> inverse();
-
     matrix<T> convolution(matrix<T> &kernel, const string &type);
 
     matrix<T> rotate();
@@ -109,13 +98,16 @@ public:
     const int getRank() const;
 
     vector<T> EigenValues();
-
     vector<matrix<T>> EigenVector();
+    T trace();
+    matrix<T> inverse();           //实数范围求逆
+    matrix<T> inverse_complex();   //复数范围求逆
+    double det();                  //实数范围求行列式
+    complex<double> det_complex(); //复数范围求行列式
 
     void display();
 
     void display_complexMatrix();
-
 };
 
 #endif // CPP_PROJECT_TEST_M_H

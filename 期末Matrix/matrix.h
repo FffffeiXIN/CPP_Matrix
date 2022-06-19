@@ -5,8 +5,10 @@
 #include <complex>
 #include <cstring>
 #include <vector>
+#include<opencv2/opencv.hpp>
 
 using namespace std;
+using namespace cv;
 
 template<typename T>
 class matrix {
@@ -26,7 +28,7 @@ public:
 
     T *getdata();
 
-    int* get_ref_count();
+    int *get_ref_count();
 
     void setdata(int index, T a);
 
@@ -53,10 +55,11 @@ public:
 
     matrix<double> operator/(T number); // scalar division a/2
     //v为列向量
-    matrix<double> vector_multiplication(const vector<T> &v);
+    matrix<T> vector_multiplication(const vector<T> &v);
 
     //v为行向量
-    static matrix<T> vector_multiplication(const vector<T> &v, const matrix<T> &matrix1);
+    template<typename T2>
+    friend matrix<T2> vector_multiplication(const vector<T2> &v, const matrix<T2> &matrix1);
 
     matrix<T> cross(matrix<T> other);
 
@@ -64,7 +67,6 @@ public:
 
     matrix<T> dot(matrix<T> &other); //矩阵的点乘,行数相同 m*1,m*n
 
-    matrix<T> transpose(); //矩阵的转置
 
 
     matrix<T> reshape(int newRow, int newCol);
@@ -82,7 +84,9 @@ public:
 
     vector<T> average(string axis = "no");
 
-    matrix<T> conjugation(matrix<T> &matrix);//测复数
+    matrix<T> conjugation();
+
+    matrix<T> transpose(); //矩阵的转置
 
     T trace();
 
@@ -92,9 +96,9 @@ public:
 
     matrix<T> inverse();
 
-    matrix<T> convolution(const matrix<T> &kernel, const string &type);
+    matrix<T> convolution(matrix<T> &kernel, const string &type);
 
-    static matrix<T> rotate(const matrix<T> &matrix1);
+    matrix<T> rotate();
 
     static void caculate(T *data_temp, int temp_row, int temp_col, T *extend, const matrix<T> &kernel, int extend_col);
 
@@ -109,6 +113,8 @@ public:
     vector<matrix<T>> EigenVector();
 
     void display();
+
+    void display_complexMatrix();
 
 };
 

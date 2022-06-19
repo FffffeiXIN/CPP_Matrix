@@ -2,6 +2,7 @@
 #include "exception.h"
 #include <iostream>
 #include <complex>
+#include <typeinfo>
 
 using namespace std;
 
@@ -9,38 +10,39 @@ template<typename T>
 void matrix<T>::display() {
     for (int i = 0; i < this->row; i++) {
         for (int j = 0; j < this->col; ++j) {
-            cout << this->data[i * this->col + j] << " ";
+            cout << this->data[i * this->col + j] << "\t";
         }
         cout << endl;
     }
 }
 
-//template<typename T>
-//void display_complex(complex<T> cur) {
-//    if (cur.real() == 0 && cur.imag() == 0)
-//        cout << "0 ";
-//    else {
-//        if (cur.real())
-//            cout << cur.real() << " ";
-//        if (cur.imag() > 0)
-//            cout << "+" << cur.imag() << "i ";
-//        if (cur.imag() < 0)
-//            cout << cur.imag() << "i ";
-//    }
-//}
+template<typename T>
+void display_complex(complex<T> cur) {
+    if (cur.real() == 0 && cur.imag() == 0)
+        cout << "0 ";
+    else {
+        if (cur.real())
+            cout << cur.real() << "";
+        if (cur.imag() > 0)
+            cout << "+" << cur.imag() << "i ";
+        if (cur.imag() < 0)
+            cout << cur.imag() << "i ";
+    }
+}
 
-//template<>
-//void matrix<complex<int>>::display() {
-//    for (int i = 0; i < this->row; i++) {
-//        for (int j = 0; j < this->col; ++j) {
+template<typename T>
+void matrix<T>::display_complexMatrix() {
+    for (int i = 0; i < this->row; i++) {
+        for (int j = 0; j < this->col; ++j) {
 //            cout << this->data[i * this->col + j] << " ";
-//            complex<int> cur = this->data[i * this->col + j];
-//             cout << this->data[i * this->col + j].real()<< this->data[i * this->col + j].imag()  << "i ";
-//            display_complex(cur);
-//        }
-//        cout << endl;
-//    }
-//}
+            complex<int> cur = this->data[i * this->col + j];
+//            cout << this->data[i * this->col + j].real() << this->data[i * this->col + j].imag() << "i ";
+            display_complex(cur);
+            cout << "\t";
+        }
+        cout << endl;
+    }
+}
 
 template<typename T>
 int matrix<T>::get_row() {
@@ -220,7 +222,7 @@ matrix<double> matrix<T>::operator/(T number) {
 }
 
 template<typename T>
-matrix<double> matrix<T>::vector_multiplication(const vector<T> &v) {
+matrix<T> matrix<T>::vector_multiplication(const vector<T> &v) {
     if (v.size() != this->col) {
         throw SizeMismatchException();
     }
@@ -233,18 +235,18 @@ matrix<double> matrix<T>::vector_multiplication(const vector<T> &v) {
     return matrix(this->row, 1, data_temp);
 }
 
-template<typename T>
-matrix<T> matrix<T>::vector_multiplication(const vector<T> &v, const matrix<T> &matrix1) {
+template<typename T2>
+matrix<T2> vector_multiplication(const vector<T2> &v, const matrix<T2> &matrix1) {
     if (v.size() != matrix1.row) {
         throw SizeMismatchException();
     }
-    T data_temp[matrix1.col];
+    T2 data_temp[matrix1.col];
     for (int i = 0; i < matrix1.col; ++i) {
         for (int j = 0; j < v.size(); ++j) {
             data_temp[i] += v.at(j) * matrix1.data[j * matrix1.col + i];
         }
     }
-    return matrix<T>(1, matrix1.col, data_temp);
+    return matrix<T2>(1, matrix1.col, data_temp);
 }
 
 template<typename T>
@@ -278,11 +280,9 @@ matrix<T> matrix<T>::dot(matrix<T> &other) {
         throw SizeMismatchException();
     }
     T data_temp[other.row * other.col] = {0};
-    for (int i = 0; i < this->col; ++i) {
-        for (int j = 0; j < other.row; ++j) {
-            for (int k = 0; k < other.col; ++k) {
-                data_temp[j * other.col + k] = this->data[i] * other.data[j * other.col + k];
-            }
+    for (int i = 0; i < this->row; ++i) {
+        for (int j = 0; j < other.col; ++j) {
+            data_temp[i * other.col + j] = this->data[i] * other.data[i * other.col + j];
         }
     }
     return matrix(other.row, other.col, data_temp);
@@ -464,20 +464,20 @@ vector<T> matrix<T>::average(string axis) {
 }
 
 template<typename T>
-matrix<T> matrix<T>::conjugation(matrix<T> &original) {
+matrix<T> matrix<T>::conjugation() {
     T a;
     string x = typeid(T).name();
     if (x.substr(0, 10) == "St7complex") {
-        matrix<T> res(original.row, original.col);
-        for (int i = 0; i < original.row; i++) {
-            for (int j = 0; j < original.col; j++) {
-                complex<T> value = original.data[i * res.col + j];
-                res.data[i * res.col + j] = complex<T>(value.real, (-1) * value.imag);
+        matrix<complex<int>> res(this->row, this->col);
+        for (int i = 0; i < this->row; i++) {
+            for (int j = 0; j < this->col; j++) {
+                T value = this->data[i * res.col + j];
+                res.data[i * res.col + j] = T(value.real(), (-1) * value.imag());
             }
         }
         return res;
     } else
-        return original;
+        return *this;
 };
 
 //计算行列式
@@ -592,29 +592,28 @@ matrix<T> matrix<T>::inverse() {
         // adjointMat = MatT(n, n, adjointMat); //转置
         adjointMat = adjointMat.transpose();
 
-        //        cout << "该矩阵的伴随矩阵为" << endl;
-        //        int adMat_index = 0;
-        //        for (int i = 0; i < n; i++) {
-        //            for (int j = 0; j < n; j++) {
-        //                cout << adjointMat.data[adMat_index] << "\t";
-        //                adMat_index++;
-        //            }
-        //            cout << endl;
-        //        }
+        cout << "---- The adjoin matrix is ----" << endl;
+        int adMat_index = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                cout << adjointMat.data[adMat_index] << " ";
+                adMat_index++;
+            }
+            cout << endl;
+        }
 
-        for (int i = 0; i < n * n; i++)
+        for (int i = 0; i < n * n; i++) {
             inverseMat.setdata(i, adjointMat.data[i] / detMat);
-        // cout << "该矩阵的逆矩阵为" << endl;
-        // int inverseMat_index = 0;
-        // for (i = 0; i < n; i++)
-        // {
-        //     for (j = 0; j < n; j++)
-        //     {
-        //         cout << inverseMat[inverseMat_index] << "\t";
-        //         inverseMat_index++;
-        //     }
-        //     cout << endl;
-        // }
+        }
+        cout << "---- The reverse matrix is ----" << endl;
+        int inverseMat_index = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                cout << inverseMat.data[inverseMat_index] << "\t";
+                inverseMat_index++;
+            }
+            cout << endl;
+        }
     }
     return inverseMat;
 }
@@ -633,23 +632,23 @@ T matrix<T>::trace() {
 
 //把矩阵旋转180度
 template<typename T>
-matrix<T> matrix<T>::rotate(const matrix<T> &a) {
-    T data_temp[a.row * a.col];
-    for (int i = 0; i < a.row; i++) {
-        for (int j = 0; j < a.col; j++) {
-            data_temp[i * a.col + j] = a.data[(a.row - 1 - i) * a.col + a.col - 1 - j];
+matrix<T> matrix<T>::rotate() {
+    T data_temp[this->row * this->col];
+    for (int i = 0; i < this->row; i++) {
+        for (int j = 0; j < this->col; j++) {
+            data_temp[i * this->col + j] = this->data[(this->row - 1 - i) * this->col + this->col - 1 - j];
         }
     }
-    return matrix<T>(a.row, a.col, data_temp);
+    return matrix<T>(this->row, this->col, data_temp);
 }
 
 //卷积运算
 template<typename T>
-matrix<T> matrix<T>::convolution(const matrix<T> &in, const string &type) {
+matrix<T> matrix<T>::convolution(matrix<T> &in, const string &type) {
     if (type != "full" && type != "valid" && type != "same") {
         throw TypeInvalidException();
     }
-    matrix<T> kernel = rotate(in);
+    matrix<T> kernel = in.rotate();
     int temp_row;
     int temp_col;
     int size;
@@ -694,7 +693,8 @@ matrix<T> matrix<T>::convolution(const matrix<T> &in, const string &type) {
 
 //卷积操作
 template<typename T>
-void matrix<T>::caculate(T *data_temp, int temp_row, int temp_col, T *extend, const matrix<T> &kernel, int extend_col) {
+void
+matrix<T>::caculate(T *data_temp, int temp_row, int temp_col, T *extend, const matrix<T> &kernel, int extend_col) {
     for (int i = 0; i < temp_row; ++i) {
         for (int j = 0; j < temp_col; ++j) {
             int sum = 0;
@@ -711,17 +711,17 @@ void matrix<T>::caculate(T *data_temp, int temp_row, int temp_col, T *extend, co
 template<typename T>
 vector<T> matrix<T>::EigenValues() {
     vector<T> res;
-    int MIN = 0;
+    int MIN = -1;
     int MAX = 10;
     // int sign = 0;
-    double STEP = 0.001;
+    double STEP = 1;
     double PRE = 0.0001;
 
     /*复制一份矩阵参与运算。*/
     matrix<T> c_mat_alt(this->row, this->col, this->data);
     double real;
     for (real = MIN; real <= MAX; real += STEP) {
-        for (int i = 0; i < this->row + this->col; i++) {
+        for (int i = 0; i < this->row * this->col; i++) {
             c_mat_alt.data[i] = this->data[i];
         }
         for (int i = 0; i < this->col; i++) {
@@ -785,21 +785,23 @@ vector<T> matrix<T>::EigenValues() {
 template<typename T>
 vector<matrix<T>> matrix<T>::EigenVector() {
     vector<T> eigenValue = this->EigenValues();
-
+    vector<matrix<T>> values;
     matrix<T> c_ALU(this->row, this->col, this->data);
 
     for (int j = 0; j < eigenValue.size(); j++) {
         T cur = eigenValue.at(j);
-        for (int i = 0; i < this->row + this->col; i++) {
+        for (int i = 0; i < this->row * this->col; i++) {
             c_ALU.data[i] = this->data[i];
         }
         for (int i = 0; i < this->col; i++) {
             c_ALU.data[i * this->col + i] -= cur;
         }
         c_ALU = c_ALU.getRowEchelon();
+//        c_ALU.display();
         int rank = c_ALU.getRank();
+//        int numberOfValue = this->row - rank;
         int numberOfValue = this->row - rank;
-        vector<matrix<T>> values;
+
 
         // for(int i=0;i<numberOfValue;i++){
         //     values[i] = matrix(this->col,1);
@@ -848,8 +850,8 @@ vector<matrix<T>> matrix<T>::EigenVector() {
                     break;
             }
         }
-        return values;
     }
+    return values;
 }
 
 // /*在这里定义和修改尝试的各种参数。*/
@@ -972,7 +974,8 @@ matrix<T> matrix<T>::getRowEchelon() const {
                         for (int j_cur = 0; j_cur < col; j_cur++) {
                             Matrix_RE.data[(i_cur) * this->col + j_cur] *= pivot;
                             Matrix_RE.data[(j - v) * this->col + j_cur] *= AtPivotCol;
-                            Matrix_RE.data[(i_cur) * this->col + j_cur] -= Matrix_RE.data[(j - v) * this->col + j_cur];
+                            Matrix_RE.data[(i_cur) * this->col + j_cur] -= Matrix_RE.data[(j - v) * this->col +
+                                                                                          j_cur];
                             // Matrix_RE.vectors[i_cur][j_cur] /= pivot;
                             Matrix_RE.data[(j - v) * this->col + j_cur] /= AtPivotCol;
                         }
@@ -1008,3 +1011,48 @@ void matrix<T>::RowExchange(int a, int b) {
 }
 
 
+//传入图片地址，输出二维vector
+//
+//matrix<uchar> imag_to_matrix(cv::Mat img)   //path为图片路径
+//{
+////    cv::Mat img = imread(path);                // 将图片传入Mat容器中
+////       显示原图片
+////       namedWindow("old", WINDOW_NORMAL);
+////       imshow("old", img);
+////      waitKey(0);
+//    int w = img.cols * img.channels();     //可能为3通道，宽度要乘图片的通道数
+//    int h = img.rows;
+//
+//    matrix<uchar> ar(h,w);
+//    // vector<vector<u_char> > array(h, vector<u_char>(w));      //初始化二维vector
+//    for (int i = 0; i < h; i++)
+//    {
+//        uchar* inData = img.ptr<uchar>(i);            //ptr为指向图片的行指针，参数i为行数
+//        for (int j = 0; j < w; j++)
+//        {
+//            ar.getShape()[i*ar.get_col()+j] = inData[j];
+//        }
+//    }
+//    return ar;
+//}
+
+//template <typename T>
+//cv::Mat matrixToImag(matrix<T> mat)
+//{
+//    size_t h = mat->col;
+//    size_t w = mat->row;
+//    //初始化图片的像素长宽
+//    Mat img(h, (size_t)(w/3), CV_8UC3);           //保存为RGB，图像列数像素要除以3；
+//    for (size_t i = 0; i < h; i++)
+//    {
+//        uchar* outData = img.ptr<uchar>(i);
+//        for (size_t j = 0; j < w; j++)
+//        {
+//            outData[j] = mat->data[i*mat->col+j];
+//        }
+//    }
+//    namedWindow("new", WINDOW_NORMAL);
+//    imshow("new", img);
+//    waitKey(0);
+//    imwrite("F:\\cpp_project_test\\", img);
+//}
